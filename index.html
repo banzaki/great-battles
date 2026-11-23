@@ -28,6 +28,8 @@
   .crit { padding-left:20px; line-height:1.5; } .crit li { margin-bottom:8px; }
   .row2 button { flex:1; font-size:.76rem; padding:7px; border-radius:10px; border:1px solid var(--line); background:var(--card); }
   .row2 button.on { border-color:var(--gold); color:var(--gold); }
+  .item .e { color:var(--gold); font-size:.7rem; margin-left:4px; }
+  .start { display:flex; flex-wrap:wrap; gap:6px; padding:0; list-style:none; } .start a { display:inline-block; font-size:.78rem; padding:4px 9px; border-radius:14px; border:1px solid var(--line); color:inherit; text-decoration:none; } .start a:hover { border-color:var(--gold); color:var(--gold); }
   #count { padding:6px 16px; font-size:.72rem; color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   #list { flex:1; overflow-y:auto; }
   .item { display:flex; gap:10px; align-items:baseline; width:100%; text-align:left; padding:9px 16px; background:none; border:none; border-bottom:1px solid var(--line); }
@@ -216,6 +218,7 @@
     <div class="chips" id="eras"></div>
     <div class="chips" id="conts"></div>
     <div class="row2">
+      <button id="ess"></button>
       <button id="random"></button>
       <button id="about"></button>
     </div>
@@ -231,7 +234,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 48;
+const V = 49;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
@@ -256,6 +259,8 @@ const STR = {
         <li><b>Lição tática.</b> É estudada pelo jeito como foi travada.</li>
       </ol>
       <p>Cobrir uma região vazia do mapa só serve para desempatar. Muitas batalhas entraram por sugestão de leitores, sempre passando por esse filtro.</p>`,
+    ess: "★ Essenciais", essTitle: "Mostrar só as 30 batalhas essenciais",
+    startHtml: `<h2>Comece por aqui</h2><p>Trinta batalhas que cumprem os quatro critérios ao mesmo tempo. O botão ★ Essenciais deixa só elas no mapa.</p>`,
     random: "Sortear uma batalha", menu: "☰ Batalhas", other: "English",
     eras: { todas: "Todas", antiga: "Antiguidade", medieval: "Idade Média", moderna: "Idade Moderna", contemporanea: "Século XX" },
     conts: { todos: "Mundo", europa: "Europa", asia: "Ásia e Oriente Médio", africa: "África", americas: "Américas", pacifico: "Oceania e Pacífico" },
@@ -288,6 +293,8 @@ const STR = {
         <li><b>Tactics.</b> It is studied for the way it was fought.</li>
       </ol>
       <p>Filling an empty part of the map only breaks ties. Many battles came from readers' suggestions, always through this filter.</p>`,
+    ess: "★ Essentials", essTitle: "Show only the 30 essential battles",
+    startHtml: `<h2>Start here</h2><p>Thirty battles that meet all four tests at once. The ★ Essentials button leaves only these on the map.</p>`,
     random: "Pick a random battle", menu: "☰ Battles", other: "Português",
     eras: { todas: "All", antiga: "Antiquity", medieval: "Middle Ages", moderna: "Early Modern", contemporanea: "20th Century" },
     conts: { todos: "World", europa: "Europe", asia: "Asia and Middle East", africa: "Africa", americas: "Americas", pacifico: "Oceania and Pacific" },
@@ -346,7 +353,12 @@ function tpos(year) {
 }
 const sorted = [...BATTLES].sort((x, y) => x.year - y.year);
 const byId = Object.fromEntries(BATTLES.map(b => [b.id, b]));
-const state = { era: "todas", cont: "todos", q: "", current: null };
+const state = { era: "todas", cont: "todos", q: "", current: null, ess: false };
+// The essentials: battles that meet all four criteria in the About panel. Chosen by Don Bruno on 2026-11-23.
+const ESSENTIAL = new Set(["kadesh", "maratona", "salamina", "gaugamela", "changping", "canas", "alesia", "teutoburgo", "penhascos",
+  "yarmuk", "tours", "talas", "hastings", "manzikert", "ainjalut", "constantinopla",
+  "lepanto", "sekigahara", "viena", "plassey", "austerlitz", "waterloo", "gettysburg", "adwa",
+  "marne", "somme", "stalingrado", "midway", "normandia", "dienbienphu"]);
 const CONTS = S.conts;
 // Rough geographic boxes; good enough to sort battles into five groups.
 function continent(b) {
@@ -394,6 +406,7 @@ map.addLayer(cluster);
 function visible() {
   const q = norm(state.q.trim());
   return sorted.filter(b =>
+    (!state.ess || ESSENTIAL.has(b.id)) &&
     (state.era === "todas" || b.era === state.era) &&
     (state.cont === "todos" || continent(b) === state.cont) &&
     (!q || norm(b.basic ? `${b.name} ${b.place} ${b.war} ${b.parts.join(" ")} ${fmtYear(b.year)}` : `${b.name} ${b.place} ${b.a.leader} ${b.b.leader} ${b.a.side} ${b.b.side} ${fmtYear(b.year)}`).includes(q)));
@@ -408,7 +421,7 @@ function refresh(fit) {
     <button class="item ${b.id === state.current ? "sel" : ""}" data-id="${b.id}">
       <span class="y">${fmtYear(b.year)}</span>
       <i class="d" style="background:${ERAS[b.era][1]}"></i>
-      <span class="n">${b.name}<small>${b.place}</small></span>
+      <span class="n">${b.name}${ESSENTIAL.has(b.id) ? '<span class="e" aria-hidden="true">★</span>' : ""}<small>${b.place}</small></span>
       ${FORMATIONS[b.id] ? '<span class="f" title="${S.hasDiagram}">◆</span>' : ""}
     </button>`).join("") || `<p style="padding:16px;color:var(--muted)">${S.none}</p>`;
   $("track").innerHTML =
@@ -656,7 +669,7 @@ function emblem(id, cls) {
 // The selection criteria, shown in the battle panel.
 function openAbout() {
   if (state.current) closePanel();
-  $("panel").innerHTML = `${topNav("", "")}${S.aboutHtml}`;
+  $("panel").innerHTML = `${topNav("", "")}${S.aboutHtml}${S.startHtml}<ul class="start">${sorted.filter(b => ESSENTIAL.has(b.id)).map(b => `<li><a href="#${b.id}">${b.name} · ${fmtYear(b.year)}</a></li>`).join("")}</ul>`;
   $("panel").classList.add("open"); document.body.classList.add("po"); $("panel").scrollTop = 0;
   $("side").classList.remove("open");
 }
@@ -932,7 +945,9 @@ function drawFormation(b, f) {
 
 // ---------- Start ----------
 $("title").textContent = S.title; $("sub").textContent = S.sub; $("q").placeholder = S.search;
-$("random").textContent = S.random; $("about").textContent = S.about; $("about").onclick = openAbout; $("menu").textContent = S.menu; $("lang").textContent = S.other;
+$("random").textContent = S.random; $("about").textContent = S.about; $("about").onclick = openAbout;
+$("ess").textContent = S.ess; $("ess").title = S.essTitle;
+$("ess").onclick = () => { state.ess = !state.ess; $("ess").classList.toggle("on", state.ess); Analytics.track("essentials_toggled", { on: state.ess }); refresh(true); }; $("menu").textContent = S.menu; $("lang").textContent = S.other;
 $("lang").onclick = () => { location.href = location.pathname + "?lang=" + (LANG === "pt" ? "en" : "pt") + location.hash; };
 refresh(false);
 Analytics.track("$pageview", { lang: LANG });
