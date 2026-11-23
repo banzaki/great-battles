@@ -43,6 +43,11 @@ const FEATURED = {
 
 // Connections between battles (same war, same commander, or cause and consequence). Read in both directions.
 const LINKS = {
+  beaumonthamel: ["somme", "vimy"],
+  dieppe: ["normandia"],
+  lexingtonconcord: ["bunkerhill"],
+  iadrang: ["hue"],
+  fallujah2004: ["mosul2017"],
   maratona: ["termopilas", "salamina", "plateia"],
   termopilas: ["salamina", "plateia"],
   queroneia: ["leuctra", "isso"],

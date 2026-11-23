@@ -234,4 +234,10 @@ const SIDE_EMBLEMS = {"maratona":["athens","achaemenid"],
 "chosin":["usa",""],
 "marcoral":["usa","japan_rising"],
 "montecassino":["","prussia_iron"],
-"marfilipinas":["usa","japan_rising"]};
+"marfilipinas":["usa","japan_rising"],
+"beaumonthamel":["britain","prussia_iron"],
+"vimy":["","prussia_iron"],
+"dieppe":["","prussia_iron"],
+"lexingtonconcord":["","britain_1707"],
+"iadrang":["usa",""],
+"fallujah2004":["usa",""]};
