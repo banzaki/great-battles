@@ -164,6 +164,7 @@ Object.assign(DEEP, {
         "A federation of Turkic tribes famous for its smiths and iron weapons. Gao recruited them in Fergana to form his army. They were a large part of the Tang force, and their loyalty depended on which side seemed to be winning."
       ]},
       { n: "03", title: "Step by Step", blocks: [
+        { formation: true },
         { h: "The Forces" },
         "The numbers vary widely depending on who is counting. Chinese sources say the Abbasids had 200,000 men, including Tibetans. Arab sources say the Chinese had 100,000. The Chinese sources themselves give the Tang side 30,000 men: about 10,000 Tang soldiers and 20,000 mercenary [[Karluks|carlucos]]. Other versions give 20,000 Chinese and 10,000 Karluks. A modern estimate puts it at around 30,000 for each side.",
         { note: "The numbers for the Arab side are the most uncertain. The 200,000 come from Chinese sources and are considered exaggerated." },

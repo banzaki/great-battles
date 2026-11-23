@@ -167,6 +167,7 @@ Object.assign(DEEP, {
         "O príncipe Józef Poniatowski, polonês, comandava os poloneses ao lado de Napoleão, que o promoveu a marechal da França durante a batalha. Seu fim, no último dia, é um dos símbolos de Leipzig."
       ]},
       { n: "03", title: "Passo a passo", blocks: [
+        { formation: true },
         { h: "As forças" },
         "Nos dias 16 e 17, os aliados tinham cerca de 257.000 homens e 1.145 canhões, contra cerca de 177.000 franceses e 700 canhões. Nos dias 18 e 19, com os reforços, passaram a cerca de 359.000 homens e 1.500 canhões, contra cerca de 195.000 e 900. No total, eram uns 560.000 soldados, e a Rússia tinha 150.000, a Áustria 115.000, a Prússia 90.000 e a Suécia 30.000. Do lado francês, só uns 160.000 eram franceses: o resto eram poloneses, italianos, napolitanos, saxões e homens de Baden, Württemberg, Hesse e Westfália.",
         { h: "O terreno" },

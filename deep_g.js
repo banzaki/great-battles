@@ -164,6 +164,7 @@ Object.assign(DEEP, {
         "Uma federação de tribos turcas famosa por seus ferreiros e suas armas de ferro. Gao os recrutou em Fergana para formar seu exército. Eram uma parte grande da tropa Tang, e sua lealdade dependia do lado que parecesse ganhar."
       ]},
       { n: "03", title: "Passo a passo", blocks: [
+        { formation: true },
         { h: "As forças" },
         "Os números variam muito conforme quem conta. Fontes chinesas dizem que os abássidas tinham 200.000 homens, incluindo tibetanos. Fontes árabes dizem que os chineses tinham 100.000. As próprias fontes chinesas dão ao lado Tang 30.000 homens: cerca de 10.000 soldados Tang e 20.000 [[carlucos]] mercenários. Outras versões trazem 20.000 chineses e 10.000 carlucos. Uma estimativa moderna fica em torno de 30.000 para cada lado.",
         { note: "Os números do lado árabe são os mais incertos. Os 200.000 vêm de fontes chinesas e são considerados exagerados." },

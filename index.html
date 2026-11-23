@@ -227,13 +227,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 41;
+const V = 43;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
 if (!LANGS.includes(LANG)) LANG = DEFAULT_LANG;
 document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
-const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "battles9", "battles10", "battles11", "battles12", "battles13", "battles14", "battles15", "battles16", "battles17", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao", "deep_ap", "deep_aq", "deep_ar", "deep_as", "deep_at", "deep_au", "deep_av", "deep_aw", "deep_ax"];
+const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "battles9", "battles10", "battles11", "battles12", "battles13", "battles14", "battles15", "battles16", "battles17", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao", "deep_ap", "deep_aq", "deep_ar", "deep_as", "deep_at", "deep_au", "deep_av", "deep_aw", "deep_ax", "deep_ay"];
 document.write(DATA_FILES.map(f => `<script src="${LANG === "en" ? "en/" : ""}${f}.js?v=${V}"><\/script>`).join("") +
   `<script src="battles_wd.js?v=${V}"><\/script><script src="unit_kinds.js?v=${V}"><\/script>`);
 </script>
@@ -653,8 +653,9 @@ function unitShape(u) {
 function drawFormation(b, f) {
   stopPlay();
   // Resolve each step into full positions: units keep their last position and stay routed once routed.
-  const frames = []; let pos = {}, gone = new Set();
-  f.steps.forEach(s => { pos = { ...pos, ...s.p }; (s.x || []).forEach(id => gone.add(id)); frames.push({ pos, gone: new Set(gone), t: s.t }); });
+  // side: a unit's colour per step; "sw" in a step switches a unit to the other side from then on (defections).
+  const frames = []; let pos = {}, gone = new Set(), side = Object.fromEntries(f.units.map(u => [u.id, u.s]));
+  f.steps.forEach(s => { pos = { ...pos, ...s.p }; side = { ...side, ...s.sw }; (s.x || []).forEach(id => gone.add(id)); frames.push({ pos, gone: new Set(gone), side, t: s.t }); });
 
   const terrain = (f.terrain || []).map(t =>
     t.t === "sea" ? `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" fill="#b9cfd9"/><text class="ter" x="${t.x + t.w / 2}" y="${t.y + t.h / 2 + 1}">${t.l}</text>` :
@@ -784,6 +785,8 @@ function drawFormation(b, f) {
       const [x, y, r = 0] = fr.pos[g.dataset.u];
       g.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
       g.classList.toggle("gone", fr.gone.has(g.dataset.u));
+      const sd = fr.side[g.dataset.u];
+      g.querySelectorAll(".shape").forEach(e => { e.classList.remove("a", "b"); e.classList.add(sd); });
     });
     let leaders = "";
     document.querySelectorAll("#formation [data-l]").forEach(t => {
@@ -805,15 +808,16 @@ function drawFormation(b, f) {
       if (dist < 4 || frames[k - 1].gone.has(u.id)) return;
       // Stop the arrow short of the unit, so the head is not hidden under it.
       const cut = Math.min(dist - 2, Math.min(u.w, u.h) / 2 + 1.5), ex = x1 - (x1 - x0) / dist * cut, ey = y1 - (y1 - y0) / dist * cut;
-      arrows += `<line class="arrow ${u.s}" x1="${x0}" y1="${y0}" x2="${ex}" y2="${ey}" marker-end="url(#ah-${u.s})"/>`;
-      ghosts += `<rect class="ghost ${u.s}" x="${-u.w / 2}" y="${-u.h / 2}" width="${u.w}" height="${u.h}" transform="translate(${x0} ${y0}) rotate(${r0})"/>`;
+      const sd = fr.side[u.id];
+      arrows += `<line class="arrow ${sd}" x1="${x0}" y1="${y0}" x2="${ex}" y2="${ey}" marker-end="url(#ah-${sd})"/>`;
+      ghosts += `<rect class="ghost ${frames[k - 1].side[u.id]}" x="${-u.w / 2}" y="${-u.h / 2}" width="${u.w}" height="${u.h}" transform="translate(${x0} ${y0}) rotate(${r0})"/>`;
     });
     // Highlight the units that act in this step: the step's own "focus" list, or the few that moved most.
     const moved = k === 0 ? [] : f.units.map(u => {
       const [x0, y0] = frames[k - 1].pos[u.id], [x1, y1] = fr.pos[u.id];
       return [u.id, frames[k - 1].gone.has(u.id) ? 0 : Math.hypot(x1 - x0, y1 - y0)];
     }).filter(([, d]) => d >= 4).sort((a, c) => c[1] - a[1]).slice(0, 4).map(([id]) => id);
-    const actors = new Set(f.steps[k].focus || moved);
+    const actors = new Set([...(f.steps[k].focus || moved), ...Object.keys(f.steps[k].sw || {})]);
     svg.classList.toggle("has-act", actors.size > 0);
     document.querySelectorAll("#formation g[data-u]").forEach(g => g.classList.toggle("act", actors.has(g.dataset.u)));
     document.querySelector("#formation #arrows").innerHTML = arrows;

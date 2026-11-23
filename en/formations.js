@@ -2,6 +2,7 @@
 // units: id, s (side "a" | "b"), k (kind: inf | cav | ele | car | ship | camp), w, h, l (label)
 // steps: t (caption), p (unit id -> [x, y, rotation]); positions carry over from the previous step.
 //        x lists the units that are broken or routed from this step on (drawn faded).
+//        sw (unit id -> "a" | "b") switches a unit to the other side from this step on (a defection).
 // terrain: sea {x,y,w,h,l} | hill {x,y,rx,ry,l} | note {x,y,l}
 const FORMATIONS = {
   maratona: {

@@ -167,6 +167,7 @@ Object.assign(DEEP, {
         "Prince Józef Poniatowski, a Pole, commanded the Poles on Napoleon's side, and Napoleon promoted him to marshal of France during the battle. His end, on the last day, is one of the symbols of Leipzig."
       ]},
       { n: "03", title: "Step by step", blocks: [
+        { formation: true },
         { h: "The forces" },
         "On the 16th and 17th, the allies had about 257,000 men and 1,145 cannons, against about 177,000 French and 700 cannons. On the 18th and 19th, with reinforcements, they rose to about 359,000 men and 1,500 cannons, against about 195,000 and 900. In all, there were some 560,000 soldiers, and Russia had 150,000, Austria 115,000, Prussia 90,000 and Sweden 30,000. On the French side, only some 160,000 were French: the rest were Poles, Italians, Neapolitans, Saxons and men from Baden, Württemberg, Hesse and Westphalia.",
         { h: "The terrain" },

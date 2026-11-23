@@ -4,7 +4,7 @@
 
 **Live:** https://banzaki.github.io/great-battles/
 
-Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 166 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
+Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 168 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
 
 ![The map](media/map.png)
 
@@ -19,7 +19,7 @@ History books tell you *what* happened at Cannae or Gaugamela; few show you *whe
 ## What's inside
 
 - **272 battles** across every continent and era, each with four chapters, a timeline, glossary terms you can tap, and notes where historians disagree.
-- **166 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
+- **168 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
 - **The Battle Theatre:** the diagram full screen, with wheel and pinch zoom, drag, slow motion and a before/after comparison. It works on phones in portrait and landscape.
 - **Two languages:** English and Portuguese, switchable from the header.
 
@@ -27,7 +27,7 @@ History books tell you *what* happened at Cannae or Gaugamela; few show you *whe
 
 - **Stack:** plain HTML, CSS and JavaScript, no framework and no build step. [Leaflet](https://leafletjs.com/) with marker clustering for the map, Esri National Geographic tiles, GitHub Pages for hosting.
 - **Data as code:** every battle is a plain JavaScript data file (cards, in-depth chapters, diagram positions per step), so adding a battle is adding data, not code.
-- **Diagram engine:** units, terrain and steps are drawn as inline SVG from the data. Labels are placed automatically so they avoid each other, the units and the terrain names. That cut overlapping labels from 589 diagram steps to 6, out of 1,389. The view fits itself to where the armies actually are.
+- **Diagram engine:** units, terrain and steps are drawn as inline SVG from the data. Labels are placed automatically so they avoid each other, the units and the terrain names. That cut overlapping labels from 589 diagram steps to 1, out of 1,406, and labels keep their place from step to step so they never look like moving troops. The view fits itself to where the armies actually are.
 - **Content and accuracy:** the texts were written with AI assistance (Claude) and checked against sources: English and Portuguese Wikipedia and the works they cite, Britannica, and primary-source translations where available. Ancient and chronicle numbers are flagged as such, and legends are marked as legends.
 - **Translation:** each Portuguese data file has an English twin. A small checker script compares the two files' structure and flags glossary links that changed or don't resolve, and text that still looks untranslated.
 - **Privacy-friendly analytics:** an anonymous visit counter (PostHog, plain HTTP API). It uses no cookies, creates no person profiles and records no sessions, and it turns off under Global Privacy Control or Do Not Track.
@@ -54,6 +54,7 @@ The launch post reached 51 upvotes and 20 comments on r/ancientrome, 37 upvotes 
 - Readers and the author noticed empty areas on the map, so a 20-battle regional pack followed: southern France, Catalonia and northern Italy, from Vouillé (507) to the Ebro (1938).
 - A 19-battle pack of famous battles that were missing: the early Islamic conquests from Badr (624) to Covadonga (722), plus Granicus, Philippi, Stamford Bridge, Nicopolis, Chaldiran, Leuthen, Jena, Königgrätz and Okinawa, and Cape Ecnomus (256 BC), which a reader asked for.
 - Arrows at the top of each battle step to the previous and next battle, and a double-click on the map closes it.
+- A reader showed that labels sliding between steps looked like units moving (Zama, Gaugamela), and that diagrams could not show troops changing sides. Labels now stay put, and units can switch sides mid-battle: the Saxons at Leipzig and the Karluks at Talas now have diagrams.
 
 ## Credits
 
