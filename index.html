@@ -60,6 +60,8 @@
   .side { background:var(--card); border-radius:10px; padding:10px; font-size:.84rem; border-top:3px solid var(--blue); line-height:1.4; }
   .side.b { border-top-color:var(--red); }
   .side b { display:block; font-size:.95rem; margin-bottom:4px; }
+  .side .emb { display:inline-block; width:22px; height:22px; vertical-align:-5px; margin-right:6px; }
+  .side .emb svg { width:100%; height:100%; display:block; }
   .side .win { color:var(--gold); font-weight:600; font-size:.72rem; margin-top:4px; }
   .draw { text-align:center; font-size:.75rem; color:var(--gold); font-weight:600; margin-bottom:6px; }
   .strength { display:flex; height:10px; border-radius:5px; overflow:hidden; margin:6px 0 4px; }
@@ -227,7 +229,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 43;
+const V = 45;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
@@ -235,7 +237,8 @@ if (!LANGS.includes(LANG)) LANG = DEFAULT_LANG;
 document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
 const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "battles9", "battles10", "battles11", "battles12", "battles13", "battles14", "battles15", "battles16", "battles17", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao", "deep_ap", "deep_aq", "deep_ar", "deep_as", "deep_at", "deep_au", "deep_av", "deep_aw", "deep_ax", "deep_ay"];
 document.write(DATA_FILES.map(f => `<script src="${LANG === "en" ? "en/" : ""}${f}.js?v=${V}"><\/script>`).join("") +
-  `<script src="battles_wd.js?v=${V}"><\/script><script src="unit_kinds.js?v=${V}"><\/script>`);
+  `<script src="battles_wd.js?v=${V}"><\/script><script src="unit_kinds.js?v=${V}"><\/script>` +
+  `<script src="emblems.js?v=${V}"><\/script><script src="emblems_map.js?v=${V}"><\/script>`);
 </script>
 <script>
 const STR = {
@@ -441,7 +444,7 @@ function openBattle(id) {
   if (DEEP[id]) return renderDeep(b, DEEP[id]);
 
   const known = b.a.n > 0 && b.b.n > 0, pa = known ? Math.round(b.a.n / (b.a.n + b.b.n) * 100) : 50;
-  const side = (s, cls, won) => `<div class="side ${cls}"><b>${s.side}</b>${s.leader}<br>${s.troops}${won ? `<div class="win">${S.winner}</div>` : ""}</div>`;
+  const side = (s, cls, won) => `<div class="side ${cls}"><b>${emblem(id, cls)}${s.side}</b>${s.leader}<br>${s.troops}${won ? `<div class="win">${S.winner}</div>` : ""}</div>`;
   const ft = FEATURED[id], conn = [...(linked[id] || [])].map(x => byId[x]).filter(Boolean).sort((x, y) => x.year - y.year);
   const list = visible(), i = list.findIndex(x => x.id === id);
   const prev = i > 0 ? list[i - 1].id : "", next = i >= 0 && i < list.length - 1 ? list[i + 1].id : "";
@@ -498,7 +501,7 @@ function renderDeep(b, d) {
   const list = visible(), i = list.findIndex(x => x.id === id);
   const prev = i > 0 ? list[i - 1].id : "", next = i >= 0 && i < list.length - 1 ? list[i + 1].id : "";
   const known = b.a.n > 0 && b.b.n > 0, pa = known ? Math.round(b.a.n / (b.a.n + b.b.n) * 100) : 50;
-  const side = (s, cls, won) => `<div class="side ${cls}"><b>${s.side}</b>${s.leader}<br>${s.troops}${won ? `<div class="win">${S.winner}</div>` : ""}</div>`;
+  const side = (s, cls, won) => `<div class="side ${cls}"><b>${emblem(id, cls)}${s.side}</b>${s.leader}<br>${s.troops}${won ? `<div class="win">${S.winner}</div>` : ""}</div>`;
   $("panel").innerHTML = `
     ${topNav(prev, next)}
     <div class="era-tag" style="color:${ERAS[b.era][1]}">${ERAS[b.era][0]} · ${d.war}</div>
@@ -618,6 +621,13 @@ function topNav(prev, next) {
       <button ${next ? "" : "disabled"} onclick="openBattle('${next}')" aria-label="${S.next}" title="${S.next}">›</button>
       <button id="close" onclick="closePanel()" aria-label="${S.close}" title="${S.close}">×</button>
     </div>`;
+}
+
+// The period emblem of one side of a battle, if it has one (emblems.js, emblems_map.js).
+function emblem(id, cls) {
+  const k = typeof SIDE_EMBLEMS === "undefined" ? "" : (SIDE_EMBLEMS[id] || [])[cls === "a" ? 0 : 1];
+  const e = k && typeof EMBLEMS !== "undefined" && EMBLEMS[k];
+  return e ? `<span class="emb" title="${e[LANG]}" role="img" aria-label="${e[LANG]}">${e.svg}</span>` : "";
 }
 
 function closePanel() {

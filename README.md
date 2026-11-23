@@ -55,6 +55,7 @@ The launch post reached 51 upvotes and 20 comments on r/ancientrome, 37 upvotes 
 - A 19-battle pack of famous battles that were missing: the early Islamic conquests from Badr (624) to Covadonga (722), plus Granicus, Philippi, Stamford Bridge, Nicopolis, Chaldiran, Leuthen, Jena, Königgrätz and Okinawa, and Cape Ecnomus (256 BC), which a reader asked for.
 - Arrows at the top of each battle step to the previous and next battle, and a double-click on the map closes it.
 - A reader showed that labels sliding between steps looked like units moving (Zama, Gaugamela), and that diagrams could not show troops changing sides. Labels now stay put, and units can switch sides mid-battle: the Saxons at Leipzig and the Karluks at Talas now have diagrams.
+- A reader suggested emblems for each side. 35 period emblems (the Roman aquila, the sign of Tanit, the Vergina sun, Timur's three circles, the Cross of Burgundy and more) now mark the sides of 188 battles. Each one is matched to the period, so there are no modern flags on ancient battles.
 
 ## Credits
 
