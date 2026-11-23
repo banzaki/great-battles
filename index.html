@@ -151,6 +151,9 @@
     #timeline { left:8px; right:8px; bottom:20px; }
     #timeline .tick:nth-of-type(2n) { display:none; }
     #panel { top:auto; height:68%; width:100%; border-left:none; border-top:1px solid var(--line); border-radius:16px 16px 0 0; transform:translateY(100%); }
+    #panel.drag { transition:none; }
+    /* Grab handle: the sheet can be swiped down to close it. */
+    #panel::before { content:""; display:block; width:44px; height:5px; border-radius:3px; background:var(--line); margin:-10px auto 10px; }
   }
 </style>
 </head>
@@ -177,6 +180,7 @@
 
 <aside id="panel"></aside>
 
+<script src="analytics.js?v=2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
@@ -371,6 +375,7 @@ function wikiQuery(b) {
 
 function openBattle(id) {
   const b = byId[id]; if (!b) return;
+  Analytics.track("battle_opened", { battle_id: id, lang: LANG });
   if (state.current && markers[state.current]) markers[state.current].setIcon(pinIcon(byId[state.current], false));
   state.current = id;
   markers[id].setIcon(pinIcon(b, true));
@@ -523,6 +528,41 @@ function renderBasic(b) {
     .catch(() => { if (state.current === b.id) $("wiki").textContent = S.wikiFail; });
 }
 
+// Phones: swipe the battle sheet down to close it and go back to the full map.
+// The swipe starts only when the sheet is scrolled to the top, so reading the text still scrolls normally.
+(() => {
+  const panel = $("panel"), phone = matchMedia("(max-width:760px)");
+  let y0 = null, x0 = 0, t0 = 0, dy = 0, dragging = false;
+  panel.addEventListener("touchstart", e => {
+    y0 = null;
+    if (!phone.matches || e.touches.length !== 1 || panel.scrollTop > 0) return;
+    if (e.target.closest(".field, #formation.theater, input, textarea")) return;
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; t0 = Date.now(); dy = 0; dragging = false;
+  }, { passive: true });
+  panel.addEventListener("touchmove", e => {
+    if (y0 === null) return;
+    const t = e.touches[0], d = t.clientY - y0;
+    if (!dragging) {
+      // Decide once: a downward, mostly vertical move from the top becomes a drag; anything else is left alone.
+      if (Math.abs(d) < 8 && Math.abs(t.clientX - x0) < 8) return;
+      if (d <= 0 || Math.abs(t.clientX - x0) > Math.abs(d) || panel.scrollTop > 0) { y0 = null; return; }
+      dragging = true; panel.classList.add("drag");
+    }
+    dy = Math.max(0, d);
+    panel.style.transform = `translateY(${dy}px)`;
+    e.preventDefault();
+  }, { passive: false });
+  const end = () => {
+    if (y0 === null) return;
+    y0 = null;
+    if (!dragging) return;
+    dragging = false; panel.classList.remove("drag"); panel.style.transform = "";
+    const fast = dy > 40 && dy / Math.max(1, Date.now() - t0) > 0.5;
+    if (dy > panel.offsetHeight * 0.25 || fast) closePanel();
+  };
+  panel.addEventListener("touchend", end); panel.addEventListener("touchcancel", end);
+})();
+
 function closePanel() {
   $("panel").classList.remove("open");
   document.body.classList.remove("po");
@@ -642,6 +682,7 @@ $("title").textContent = S.title; $("sub").textContent = S.sub; $("q").placehold
 $("random").textContent = S.random; $("menu").textContent = S.menu; $("lang").textContent = S.other;
 $("lang").onclick = () => { location.href = location.pathname + "?lang=" + (LANG === "pt" ? "en" : "pt") + location.hash; };
 refresh(false);
+Analytics.track("$pageview", { lang: LANG });
 const start = location.hash.slice(1);
 if (byId[start]) openBattle(start);
 window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (byId[id] && id !== state.current) openBattle(id); });
