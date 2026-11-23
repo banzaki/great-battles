@@ -112,6 +112,8 @@
   .field .u.gone { opacity:.22; }
   /* A routed unit stays as a faded shape; its name would only get in the way of the live labels. */
   .field .lab.gone { opacity:0; }
+  /* A label that changes spot while its unit stands still fades across instead of sliding, so it never reads as movement. */
+  .field .lab.hop { transition:none; opacity:0; }
   .field .a { fill:var(--blue); } .field .b { fill:var(--red); }
   .field .shape { stroke:#2b2824; stroke-width:.35; }
   .field .mark { stroke:#f4ecd8; stroke-width:.4; fill:none; }
@@ -225,7 +227,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 40;
+const V = 41;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
@@ -718,7 +720,10 @@ function drawFormation(b, f) {
   const terBoxes = [...svg.querySelectorAll("text.ter")].map(t => { try { const b = t.getBBox(); return b.width ? [b.x, b.y, b.x + b.width, b.y + b.height] : null; } catch (e) { return null; } }).filter(Boolean);
   // Place every label of a step so labels do not cover each other or other units.
   // Each label tries spots around its own unit, best first; far spots get a thin leader line.
-  function placeLabels(fr) {
+  // A label keeps its spot from the previous step unless that spot now collides, so labels
+  // do not jump around and read as unit movement; a unit that stands still holds its label harder.
+  function placeLabels(fr, k) {
+    const prev = k > 0 ? labelAt[k - 1] : null, before = k > 0 ? frames[k - 1] : null;
     const live = f.units.filter(u => !fr.gone.has(u.id)), boxes = live.map(u => [u.id, ubox(u, fr.pos[u.id])]);
     const placed = [...terBoxes], out = {};
     live.filter(u => u.l).sort((a, c) => c.w * c.h - a.w * a.h).forEach(u => {
@@ -735,14 +740,20 @@ function drawFormation(b, f) {
         let score = i * 0.01 + (wa * ha - overlap(box, [-8, -2, 108, 74])) * 10;
         placed.forEach(pb => score += overlap(box, pb) * 10);
         boxes.forEach(([id, ub]) => { if (id !== u.id) score += overlap(box, ub) * 3; });
-        if (score < bestScore) { bestScore = score; best = { tx, ty, box, far: i >= 4 }; }
+        const was = prev && prev[u.id];
+        if (was && was.i !== i) {
+          const [px, py, pr = 0] = before.pos[u.id], [nx, ny, nr = 0] = fr.pos[u.id];
+          score += Math.hypot(nx - px, ny - py) < 0.5 && pr === nr ? 8 : 2;
+        }
+        if (score < bestScore) { bestScore = score; best = { tx, ty, box, i, far: i >= 4 }; }
       });
       if (best.far) best.line = best.box[1] > y1 ? [cx, y1, best.tx, best.box[1]] : [cx, y0, best.tx, best.box[3]];
       placed.push(best.box); out[u.id] = best;
     });
     return out;
   }
-  const labelAt = frames.map(placeLabels);
+  const labelAt = [];
+  frames.forEach((fr, k) => labelAt.push(placeLabels(fr, k)));
 
   // Fit the view to where the armies actually are (units and labels in every step, hills and notes),
   // so the field is not mostly empty space. Sea is background and may be cut.
@@ -767,7 +778,7 @@ function drawFormation(b, f) {
   const timing = () => slow ? { move: 2.4, wait: 7000 } : { move: 1.2, wait: 4200 };
   function show(k, keepCompare) {
     if (!keepCompare && compareFrom !== null) { compareFrom = null; $("compare").textContent = S.compare; $("compare").classList.remove("on"); }
-    step = k;
+    const from = step; step = k;
     const fr = frames[k];
     document.querySelectorAll("#formation [data-u]").forEach(g => {
       const [x, y, r = 0] = fr.pos[g.dataset.u];
@@ -779,6 +790,10 @@ function drawFormation(b, f) {
       const p = labelAt[k][t.dataset.l];
       t.classList.toggle("gone", fr.gone.has(t.dataset.l));
       if (!p) return;
+      const id = t.dataset.l, was = labelAt[from][id], a = frames[from].pos[id], b = fr.pos[id];
+      if (from !== k && was && (was.tx !== p.tx || was.ty !== p.ty) && a.join() === b.join()) {
+        t.classList.add("hop"); requestAnimationFrame(() => requestAnimationFrame(() => t.classList.remove("hop")));
+      }
       t.style.transform = `translate(${p.tx}px, ${p.ty}px)`;
       if (p.line) leaders += `<line class="leader" x1="${p.line[0]}" y1="${p.line[1]}" x2="${p.line[2]}" y2="${p.line[3]}"/>`;
     });
