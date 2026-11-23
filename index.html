@@ -25,6 +25,7 @@
   .chips button.on { border-color:var(--gold); color:var(--gold); }
   .chips i { width:8px; height:8px; border-radius:50%; display:inline-block; }
   .row2 { display:flex; gap:6px; margin-top:8px; }
+  .crit { padding-left:20px; line-height:1.5; } .crit li { margin-bottom:8px; }
   .row2 button { flex:1; font-size:.76rem; padding:7px; border-radius:10px; border:1px solid var(--line); background:var(--card); }
   .row2 button.on { border-color:var(--gold); color:var(--gold); }
   #count { padding:6px 16px; font-size:.72rem; color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
@@ -216,6 +217,7 @@
     <div class="chips" id="conts"></div>
     <div class="row2">
       <button id="random"></button>
+      <button id="about"></button>
     </div>
   </div>
   <div id="count"></div>
@@ -229,13 +231,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 45;
+const V = 47;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
 if (!LANGS.includes(LANG)) LANG = DEFAULT_LANG;
 document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
-const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "battles9", "battles10", "battles11", "battles12", "battles13", "battles14", "battles15", "battles16", "battles17", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao", "deep_ap", "deep_aq", "deep_ar", "deep_as", "deep_at", "deep_au", "deep_av", "deep_aw", "deep_ax", "deep_ay"];
+const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "battles9", "battles10", "battles11", "battles12", "battles13", "battles14", "battles15", "battles16", "battles17", "battles18", "battles19", "battles20", "battles21", "battles22", "battles23", "battles24", "battles25", "battles26", "battles27", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao", "deep_ap", "deep_aq", "deep_ar", "deep_as", "deep_at", "deep_au", "deep_av", "deep_aw", "deep_ax", "deep_ay", "deep_az", "deep_ba", "deep_bb", "deep_bc", "deep_bd", "deep_be", "deep_bf", "deep_bg", "deep_bh", "deep_bi"];
 document.write(DATA_FILES.map(f => `<script src="${LANG === "en" ? "en/" : ""}${f}.js?v=${V}"><\/script>`).join("") +
   `<script src="battles_wd.js?v=${V}"><\/script><script src="unit_kinds.js?v=${V}"><\/script>` +
   `<script src="emblems.js?v=${V}"><\/script><script src="emblems_map.js?v=${V}"><\/script>`);
@@ -244,6 +246,16 @@ document.write(DATA_FILES.map(f => `<script src="${LANG === "en" ? "en/" : ""}${
 const STR = {
   pt: {
     title: "Grandes Batalhas", sub: "Escolha na lista ou clique no mapa.", search: "Buscar batalha, general ou lugar",
+    about: "O que é uma grande batalha?",
+    aboutHtml: `<h2>O que é uma grande batalha?</h2>
+      <p>A lista completa de batalhas da história seria imensa. Este mapa escolhe. Uma batalha entra quando cumpre pelo menos dois destes quatro critérios:</p>
+      <ol class="crit">
+        <li><b>Consequência.</b> Mudou um reino, uma dinastia, uma fronteira ou o rumo de uma guerra.</li>
+        <li><b>Escala.</b> Está entre as maiores da sua época e da sua região.</li>
+        <li><b>Memória.</b> É lembrada, ensinada, virou símbolo ou expressão.</li>
+        <li><b>Lição tática.</b> É estudada pelo jeito como foi travada.</li>
+      </ol>
+      <p>Cobrir uma região vazia do mapa só serve para desempatar. Muitas batalhas entraram por sugestão de leitores, sempre passando por esse filtro.</p>`,
     random: "Sortear uma batalha", menu: "☰ Batalhas", other: "English",
     eras: { todas: "Todas", antiga: "Antiguidade", medieval: "Idade Média", moderna: "Idade Moderna", contemporanea: "Século XX" },
     conts: { todos: "Mundo", europa: "Europa", asia: "Ásia e Oriente Médio", africa: "África", americas: "Américas", pacifico: "Oceania e Pacífico" },
@@ -266,6 +278,16 @@ const STR = {
   },
   en: {
     title: "Great Battles", sub: "Pick one from the list or click the map.", search: "Search battle, commander or place",
+    about: "What makes a battle great?",
+    aboutHtml: `<h2>What makes a battle great?</h2>
+      <p>A full list of history's battles would be endless, so this map chooses. A battle makes it in when it meets at least two of these four tests:</p>
+      <ol class="crit">
+        <li><b>Consequence.</b> It changed a kingdom, a dynasty, a border or the course of a war.</li>
+        <li><b>Scale.</b> It was among the largest of its time and region.</li>
+        <li><b>Memory.</b> It is remembered and taught, or became a symbol or a saying.</li>
+        <li><b>Tactics.</b> It is studied for the way it was fought.</li>
+      </ol>
+      <p>Filling an empty part of the map only breaks ties. Many battles came from readers' suggestions, always through this filter.</p>`,
     random: "Pick a random battle", menu: "☰ Battles", other: "Português",
     eras: { todas: "All", antiga: "Antiquity", medieval: "Middle Ages", moderna: "Early Modern", contemporanea: "20th Century" },
     conts: { todos: "World", europa: "Europe", asia: "Asia and Middle East", africa: "Africa", americas: "Americas", pacifico: "Oceania and Pacific" },
@@ -301,7 +323,8 @@ const ERAS = {
 const $ = id => document.getElementById(id);
 // Wikidata entries only have a short summary; they stay hidden unless the reader asks for them.
 const SHOW_BASIC = new URLSearchParams(location.search).has("todas");
-if (SHOW_BASIC) BATTLES.push(...WD_BATTLES);
+// Basic stubs that duplicate a written battle (same year give or take one, within about 150 km) stay hidden.
+if (SHOW_BASIC) BATTLES.push(...WD_BATTLES.filter(w => !BATTLES.some(b => Math.abs(b.year - w.year) <= 1 && Math.hypot(b.lat - w.lat, b.lng - w.lng) < 1.5)));
 // Apply the source-checked overrides, then build the two-way connections.
 Object.entries(FEATURED).forEach(([id, f]) => {
   const b = BATTLES.find(x => x.id === id); if (!b) return;
@@ -630,6 +653,14 @@ function emblem(id, cls) {
   return e ? `<span class="emb" title="${e[LANG]}" role="img" aria-label="${e[LANG]}">${e.svg}</span>` : "";
 }
 
+// The selection criteria, shown in the battle panel.
+function openAbout() {
+  if (state.current) closePanel();
+  $("panel").innerHTML = `${topNav("", "")}${S.aboutHtml}`;
+  $("panel").classList.add("open"); document.body.classList.add("po"); $("panel").scrollTop = 0;
+  $("side").classList.remove("open");
+}
+
 function closePanel() {
   const fm = document.getElementById("formation"); if (fm) fm.classList.remove("theater");
   $("panel").classList.remove("open");
@@ -901,7 +932,7 @@ function drawFormation(b, f) {
 
 // ---------- Start ----------
 $("title").textContent = S.title; $("sub").textContent = S.sub; $("q").placeholder = S.search;
-$("random").textContent = S.random; $("menu").textContent = S.menu; $("lang").textContent = S.other;
+$("random").textContent = S.random; $("about").textContent = S.about; $("about").onclick = openAbout; $("menu").textContent = S.menu; $("lang").textContent = S.other;
 $("lang").onclick = () => { location.href = location.pathname + "?lang=" + (LANG === "pt" ? "en" : "pt") + location.hash; };
 refresh(false);
 Analytics.track("$pageview", { lang: LANG });
