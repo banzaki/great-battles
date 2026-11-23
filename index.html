@@ -28,6 +28,8 @@
   .crit { padding-left:20px; line-height:1.5; } .crit li { margin-bottom:8px; }
   .row2 button { flex:1; font-size:.76rem; padding:7px; border-radius:10px; border:1px solid var(--line); background:var(--card); }
   .row2 button.on { border-color:var(--gold); color:var(--gold); }
+  #ess { font-weight:600; color:var(--gold); border-color:#b98a5e; background:#efdcbf; }
+  #ess.on { background:var(--gold); color:var(--panel); border-color:var(--gold); }
   .item .e { color:var(--gold); font-size:.7rem; margin-left:4px; }
   .start { display:flex; flex-wrap:wrap; gap:6px; padding:0; list-style:none; } .start a { display:inline-block; font-size:.78rem; padding:4px 9px; border-radius:14px; border:1px solid var(--line); color:inherit; text-decoration:none; } .start a:hover { border-color:var(--gold); color:var(--gold); }
   #count { padding:6px 16px; font-size:.72rem; color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
@@ -234,7 +236,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 49;
+const V = 50;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
