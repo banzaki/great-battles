@@ -1,6 +1,9 @@
 // Unit kinds that the batch files drew with an older symbol (planes as elephants, tanks as chariots,
 // guns as infantry). Applied on load, so the diagrams and the legend show the right symbol in every language.
 const UNIT_KINDS = {
+  pavia: {fArt: "art"},
+  rivoli: {fArt: "art"},
+  marengo: {fMar: "art"},
   isandlwana: {bArt: "art"},
   constantinopla: {oGun: "art"},
   breitenfeld: {iArt: "art"},

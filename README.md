@@ -1,10 +1,10 @@
 # Great Battles
 
-**A free interactive map of 233 battles that shaped history, from Megiddo (1457 BC) to the 20th century, in English and Portuguese.**
+**A free interactive map of 253 battles that shaped history, from Megiddo (1457 BC) to the 20th century, in English and Portuguese.**
 
 **Live:** https://banzaki.github.io/great-battles/
 
-Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 136 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
+Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 151 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
 
 ![The map](media/map.png)
 
@@ -18,8 +18,8 @@ History books tell you *what* happened at Cannae or Gaugamela; few show you *whe
 
 ## What's inside
 
-- **233 battles** across every continent and era, each with four chapters, a timeline, glossary terms you can tap, and notes where historians disagree.
-- **136 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
+- **253 battles** across every continent and era, each with four chapters, a timeline, glossary terms you can tap, and notes where historians disagree.
+- **151 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
 - **The Battle Theatre:** the diagram full screen, with wheel and pinch zoom, drag, slow motion and a before/after comparison. It works on phones in portrait and landscape.
 - **Two languages:** English and Portuguese, switchable from the header.
 
@@ -51,6 +51,7 @@ The launch post reached 51 upvotes and 20 comments on r/ancientrome, 37 upvotes 
 - A reader asked for a swipe gesture to close a battle and go back to the map on mobile. It shipped a few hours later, and the reply went back in the same thread.
 - Another reader pointed out that the battles of Genghis Khan's rise were missing. The same day, an 8-battle steppe pack added Chakirmaut (1204), where Temujin broke the Naimans, and Kazakh battles down to the 1720s.
 - Readers asked for more naval battles, so an 8-battle naval pack followed, from Mylae (260 BC) to Leyte Gulf (1944), each with a ship diagram.
+- Readers and the author noticed empty areas on the map, so a 20-battle regional pack followed: southern France, Catalonia and northern Italy, from Vouillé (507) to the Ebro (1938).
 
 ## Credits
 
