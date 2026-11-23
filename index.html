@@ -106,6 +106,8 @@
     #formation.theater .fside { flex:1; max-height:none; }
   }
   .field .u.gone { opacity:.22; }
+  /* A routed unit stays as a faded shape; its name would only get in the way of the live labels. */
+  .field .lab.gone { opacity:0; }
   .field .a { fill:var(--blue); } .field .b { fill:var(--red); }
   .field .shape { stroke:#2b2824; stroke-width:.35; }
   .field .mark { stroke:#f4ecd8; stroke-width:.4; fill:none; }
@@ -219,13 +221,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 37;
+const V = 38;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
 if (!LANGS.includes(LANG)) LANG = DEFAULT_LANG;
 document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
-const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am"];
+const DATA_FILES = ["battles", "battles2", "battles3", "battles4", "battles5", "battles6", "battles7", "battles8", "formations", "featured", "deep", "deep_a", "deep_b", "deep_c", "deep_d", "deep_e", "deep_f", "deep_g", "deep_h", "deep_i", "deep_j", "deep_k", "deep_l", "deep_m", "deep_n", "deep_o", "deep_p", "deep_q", "deep_r", "deep_s", "deep_t", "deep_u", "deep_v", "deep_w", "deep_x", "deep_y", "deep_z", "deep_aa", "deep_ab", "deep_ac", "deep_ad", "deep_ae", "deep_af", "deep_ag", "deep_ah", "deep_ai", "deep_aj", "deep_ak", "deep_al", "deep_am", "deep_an", "deep_ao"];
 document.write(DATA_FILES.map(f => `<script src="${LANG === "en" ? "en/" : ""}${f}.js?v=${V}"><\/script>`).join("") +
   `<script src="battles_wd.js?v=${V}"><\/script><script src="unit_kinds.js?v=${V}"><\/script>`);
 </script>
