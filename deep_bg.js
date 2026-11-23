@@ -223,7 +223,7 @@ Object.assign(DEEP, {
         { h: "Quinto Servílio Cepião" },
         "Procônsul e nobre de família tradicional. Tinha retomado Tolosa e, segundo a tradição, encontrado nela uma grande quantidade de ouro e prata, o chamado [[ouro de Tolosa|ouro de tolosa]]. A prata chegou a Roma, o ouro sumiu, e correu que ele o tinha desviado. Cepião se recusou a servir sob as ordens de Málio.",
         { h: "Os outros nomes" },
-        "Marco Aurélio Escauro, [[legado romano|legado]] de Málio, comandou um destacamento que foi o primeiro a encontrar os cimbros. Foi capturado e levado ao rei Boiorix. A tradição diz que Escauro aconselhou o rei a não entrar na Itália e foi morto por isso. Também lutou em Arausio, segundo Plutarco, o jovem Quinto Sertório, que, ferido, atravessou o Ródano a nado com a armadura."
+        "Marco Aurélio Escauro, [[legado|legado romano]] de Málio, comandou um destacamento que foi o primeiro a encontrar os cimbros. Foi capturado e levado ao rei Boiorix. A tradição diz que Escauro aconselhou o rei a não entrar na Itália e foi morto por isso. Também lutou em Arausio, segundo Plutarco, o jovem Quinto Sertório, que, ferido, atravessou o Ródano a nado com a armadura."
       ]},
       { n: "03", title: "Passo a passo", blocks: [
         { h: "As forças" },
