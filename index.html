@@ -72,11 +72,45 @@
 
   /* Deployment diagram */
   .field { background:#efe5c8; border:1px solid var(--line); border-radius:10px; display:block; width:100%; }
-  .field .u { transition:transform 1.2s ease, opacity 1.2s ease; }
+  .field .u { transition:transform var(--mv, 1.2s) cubic-bezier(.45,0,.25,1), opacity var(--mv, 1.2s) ease; }
+  .field.has-act g.u:not(.act):not(.gone) { opacity:.5; }
+  .field g.u.act .shape { stroke:#c9961a; stroke-width:.9; animation:pulse 1.6s ease-in-out 2; }
+  @keyframes pulse { 50% { stroke-width:1.6; } }
+  .tbar { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .tbar button { font-size:.78rem; padding:6px 10px; border-radius:10px; border:1px solid var(--line); background:var(--card); }
+  .tbar button.on { border-color:var(--gold); color:var(--gold); font-weight:600; }
+  .tbar .expand { border-color:var(--gold); color:var(--gold); font-weight:600; }
+  .thead, .hint { display:none; }
+  /* Battle theatre: the diagram takes the whole screen, with zoom and pan. */
+  #formation.theater { position:fixed; inset:0; z-index:3000; background:var(--panel); display:flex; flex-direction:column; gap:8px; padding:10px 12px; }
+  #formation.theater .fstage { flex:1; min-height:0; display:flex; }
+  #formation.theater .field { flex:1; width:100%; height:100%; touch-action:none; cursor:grab; }
+  #formation.theater .field:active { cursor:grabbing; }
+  #formation.theater .fside { flex:none; max-height:45vh; overflow-y:auto; }
+  #formation.theater .thead { display:flex; align-items:center; gap:10px; }
+  #formation.theater .thead b { font-family:"Playfair Display", serif; font-size:1.3rem; flex:1; }
+  #formation.theater .thead button { font-size:1.6rem; background:none; border:none; color:var(--muted); line-height:1; }
+  #formation.theater .cap { font-size:1rem; min-height:0; }
+  #formation.theater .expand { display:none; }
+  @media (orientation:landscape) and (min-width:700px) {
+    #formation.theater { display:grid; grid-template:"head head" auto "stage side" minmax(0,1fr) / minmax(0,1fr) 340px; }
+    #formation.theater .thead { grid-area:head; }
+    #formation.theater .fstage { grid-area:stage; }
+    #formation.theater .fside { grid-area:side; max-height:none; }
+  }
+  @media (orientation:portrait) and (max-width:700px) {
+    #formation.theater .hint { display:block; font-size:.72rem; color:var(--muted); text-align:center; }
+    /* A wide field on a tall screen: the frame takes only the drawing's height, the story gets the rest. */
+    #formation.theater .fstage { flex:none; }
+    #formation.theater .field { height:auto; max-height:62vh; }
+    #formation.theater .fside { flex:1; max-height:none; }
+  }
   .field .u.gone { opacity:.22; }
   .field .a { fill:var(--blue); } .field .b { fill:var(--red); }
   .field .shape { stroke:#2b2824; stroke-width:.35; }
   .field .mark { stroke:#f4ecd8; stroke-width:.4; fill:none; }
+  .field .leader { stroke:#6b6250; stroke-width:.2; opacity:0; animation:fadein .4s ease var(--mv, 1.2s) forwards; }
+  @keyframes fadein { to { opacity:.8; } }
   .field .lab { font-size:2.5px; fill:var(--ink); text-anchor:middle; paint-order:stroke; stroke:#efe5c8; stroke-width:.8px; font-family:Inter, sans-serif; }
   .field .ter { font-size:2.6px; fill:#6b6250; text-anchor:middle; font-style:italic; font-family:Inter, sans-serif; }
   .field .arrow { stroke-width:.7; stroke-dasharray:1.6 1; fill:none; opacity:.85; animation:fadein 1.2s; }
@@ -213,6 +247,8 @@ const STR = {
     wikiNone: "A Wikipédia não tem resumo para este artigo.", wikiFail: "Não consegui carregar o resumo agora. O link abaixo abre o artigo.",
     wikiCredit: en => `Texto e imagem: Wikipédia${en ? " em inglês" : ""}, licença CC BY-SA. A imagem pode ter outra licença; veja o artigo.`,
     diagramOf: n => `Esquema da batalha de ${n}`, stepPrev: "Passo anterior", stepNext: "Próximo passo", play: "Animar", pause: "Pausar",
+    expand: "⤢ Ampliar o campo de batalha", closeTheater: "Fechar", slow: "Câmera lenta", compare: "Comparar com o início",
+    back: k => `Voltar ao passo ${k}`, reset: "⟲ Enquadrar", hint: "Gire o celular para ver o campo maior. Use dois dedos para aproximar.",
     stepOf: (k, n) => `${k} de ${n}.`, arrows: "as setas mostram o movimento desde o passo anterior", scale: "esquema simplificado, fora de escala",
     kinds: { inf: "infantaria", cav: "cavalaria", art: "artilharia", tank: "blindados", air: "aviões", ship: "navios", ele: "elefantes ou camelos", car: "carros ou carroças", camp: "acampamento, forte ou posição fixa" },
     recon: y => `Reconstrução simplificada a partir ${y < 500 ? "dos relatos antigos" : y < 1500 ? "das crônicas da época" : y < 1900 ? "dos relatos e documentos da época" : "dos documentos da época"} e dos historiadores modernos. Posições e movimentos são aproximados.`
@@ -233,6 +269,8 @@ const STR = {
     wikiNone: "Wikipedia has no summary for this article.", wikiFail: "The summary could not be loaded right now. The link below opens the article.",
     wikiCredit: en => `Text and image: ${en ? "English" : "Portuguese"} Wikipedia, CC BY-SA licence. The image may have a different licence; see the article.`,
     diagramOf: n => `Diagram of the battle of ${n}`, stepPrev: "Previous step", stepNext: "Next step", play: "Play", pause: "Pause",
+    expand: "⤢ Expand the battlefield", closeTheater: "Close", slow: "Slow motion", compare: "Compare with the start",
+    back: k => `Back to step ${k}`, reset: "⟲ Fit", hint: "Turn your phone for a bigger field. Pinch to zoom.",
     stepOf: (k, n) => `${k} of ${n}.`, arrows: "arrows show the movement since the previous step", scale: "simplified diagram, not to scale",
     kinds: { inf: "infantry", cav: "cavalry", art: "artillery", tank: "armour", air: "aircraft", ship: "ships", ele: "elephants or camels", car: "chariots or wagons", camp: "camp, fort or fixed position" },
     recon: y => `Simplified reconstruction from ${y < 500 ? "the ancient accounts" : y < 1500 ? "the chronicles of the time" : y < 1900 ? "accounts and documents of the time" : "documents of the time"} and modern historians. Positions and movements are approximate.`
@@ -564,6 +602,7 @@ function renderBasic(b) {
 })();
 
 function closePanel() {
+  const fm = document.getElementById("formation"); if (fm) fm.classList.remove("theater");
   $("panel").classList.remove("open");
   document.body.classList.remove("po");
   stopPlay();
@@ -603,7 +642,10 @@ function drawFormation(b, f) {
     t.t === "hill" ? `<ellipse cx="${t.x}" cy="${t.y}" rx="${t.rx}" ry="${t.ry}" fill="#dccb98" stroke="#b9a66c" stroke-width=".3"/><text class="ter" x="${t.x}" y="${t.y - t.ry + 3.5}">${t.l}</text>` :
     `<text class="ter" x="${t.x}" y="${t.y}">${t.l}</text>`).join("");
 
+  $("formation").classList.remove("theater");
   $("formation").innerHTML = `
+    <div class="thead"><b>${b.name}</b><button id="thClose" aria-label="${S.closeTheater}">×</button></div>
+    <div class="fstage">
     <svg class="field" viewBox="-8 -2 116 76" role="img" aria-label="${S.diagramOf(b.name)}">
       ${terrain}
       <defs>
@@ -613,8 +655,11 @@ function drawFormation(b, f) {
       <g id="ghosts"></g>
       ${f.units.map(u => `<g class="u" data-u="${u.id}">${unitShape(u)}</g>`).join("")}
       <g id="arrows"></g>
+      <g id="leaders"></g>
       ${f.units.filter(u => u.l).map(u => `<text class="u lab" data-l="${u.id}">${u.l}</text>`).join("")}
     </svg>
+    </div>
+    <div class="fside">
     <div class="cap" id="cap"></div>
     <div class="ctl">
       <button id="stepPrev" aria-label="${S.stepPrev}">◀</button>
@@ -623,14 +668,88 @@ function drawFormation(b, f) {
       <span class="sp"></span>
       <button id="play">${S.play}</button>
     </div>
+    <div class="tbar">
+      <button class="expand" id="expand">${S.expand}</button>
+      <button id="slow">${S.slow}</button>
+      <button id="compare">${S.compare}</button>
+      <button id="fit">${S.reset}</button>
+    </div>
+    <div class="hint">${S.hint}</div>
     <div class="legend"><span><b style="color:var(--blue)">■</b> ${b.a.side}</span><span><b style="color:var(--red)">■</b> ${b.b.side}</span>${
       KIND_ORDER.filter(k => f.units.some(u => u.k === k)).map(k => `<span><svg class="lg" viewBox="-5.5 -3.2 11 6.4">${unitShape({ k, w: 9, h: 4.4, s: "n" })}</svg>${S.kinds[k]}</span>`).join("")
     }<br>${S.arrows} · ${S.scale}</div>
-    <div class="recon">${S.recon(b.year)}</div>`;
+    <div class="recon">${S.recon(b.year)}</div>
+    </div>`;
 
+  const svg = document.querySelector("#formation .field");
   const units = Object.fromEntries(f.units.map(u => [u.id, u]));
-  let step = 0;
-  function show(k) {
+
+  // Unit box at a position: the axis-aligned box around the (possibly rotated) rectangle.
+  const ubox = (u, [x, y, r = 0]) => {
+    const a = r * Math.PI / 180, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
+    const hx = u.w / 2 * c + u.h / 2 * s, hy = u.w / 2 * s + u.h / 2 * c;
+    return [x - hx, y - hy, x + hx, y + hy];
+  };
+  const overlap = (a, b) => Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])) * Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
+  // Label sizes in diagram units: width, height, and the top of the text relative to its baseline.
+  const size = {};
+  svg.querySelectorAll("text.lab").forEach(t => {
+    let bb = null; try { bb = t.getBBox(); } catch (e) {}
+    size[t.dataset.l] = bb && bb.width ? [bb.width, bb.height, bb.y] : [units[t.dataset.l].l.length * 1.35, 3, -2.4];
+  });
+  // Terrain names (sea, hills, notes) are fixed obstacles for the labels.
+  const terBoxes = [...svg.querySelectorAll("text.ter")].map(t => { try { const b = t.getBBox(); return b.width ? [b.x, b.y, b.x + b.width, b.y + b.height] : null; } catch (e) { return null; } }).filter(Boolean);
+  // Place every label of a step so labels do not cover each other or other units.
+  // Each label tries spots around its own unit, best first; far spots get a thin leader line.
+  function placeLabels(fr) {
+    const live = f.units.filter(u => !fr.gone.has(u.id)), boxes = live.map(u => [u.id, ubox(u, fr.pos[u.id])]);
+    const placed = [...terBoxes], out = {};
+    live.filter(u => u.l).sort((a, c) => c.w * c.h - a.w * a.h).forEach(u => {
+      const [w, h, by] = size[u.id], [x0, y0, x1, y1] = ubox(u, fr.pos[u.id]), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const under = y1 + 0.6 - by, over = y0 - 0.6 - h - by;
+      const spots = [[cx, under], [cx, over], [x1 + 0.8 + w / 2, cy - h / 2 - by], [x0 - 0.8 - w / 2, cy - h / 2 - by]];
+      for (let i = 1; i <= 3; i++) spots.push([cx, under + i * h * 1.05], [cx, over - i * h * 1.05]);
+      for (const dx of [w / 2 + 1, -w / 2 - 1]) spots.push([cx + dx, under], [cx + dx, over]);
+      let best = null, bestScore = Infinity;
+      spots.forEach(([tx, ty], i) => {
+        const box = [tx - w / 2, ty + by, tx + w / 2, ty + by + h];
+        // Penalise any part of the label that falls outside the original field.
+        const wa = box[2] - box[0], ha = box[3] - box[1];
+        let score = i * 0.01 + (wa * ha - overlap(box, [-8, -2, 108, 74])) * 10;
+        placed.forEach(pb => score += overlap(box, pb) * 10);
+        boxes.forEach(([id, ub]) => { if (id !== u.id) score += overlap(box, ub) * 3; });
+        if (score < bestScore) { bestScore = score; best = { tx, ty, box, far: i >= 4 }; }
+      });
+      if (best.far) best.line = best.box[1] > y1 ? [cx, y1, best.tx, best.box[1]] : [cx, y0, best.tx, best.box[3]];
+      placed.push(best.box); out[u.id] = best;
+    });
+    return out;
+  }
+  const labelAt = frames.map(placeLabels);
+
+  // Fit the view to where the armies actually are (units and labels in every step, hills and notes),
+  // so the field is not mostly empty space. Sea is background and may be cut.
+  let fit = [Infinity, Infinity, -Infinity, -Infinity];
+  const grow = b => { fit = [Math.min(fit[0], b[0]), Math.min(fit[1], b[1]), Math.max(fit[2], b[2]), Math.max(fit[3], b[3])]; };
+  frames.forEach((fr, k) => f.units.forEach(u => {
+    if (fr.gone.has(u.id) && (k === 0 || frames[k - 1].gone.has(u.id))) return;
+    grow(ubox(u, fr.pos[u.id])); if (labelAt[k][u.id]) grow(labelAt[k][u.id].box);
+  }));
+  (f.terrain || []).forEach(t => { if (t.t === "hill") grow([t.x - t.rx, t.y - t.ry, t.x + t.rx, t.y + t.ry]); });
+  terBoxes.forEach(grow);
+  // Never wider than the original field (big hills and seas may run off its edges).
+  fit = [Math.max(fit[0] - 3, -10), Math.max(fit[1] - 3, -4), Math.min(fit[2] + 3, 110), Math.min(fit[3] + 3, 76)];
+  let [fx, fy, fw, fh] = [fit[0], fit[1], fit[2] - fit[0], fit[3] - fit[1]];
+  // Keep a sensible shape: never flatter than 0.45 or taller than 0.9 (height / width), never tiny.
+  if (fw < 50) { fx -= (50 - fw) / 2; fw = 50; }
+  if (fh < fw * 0.45) { fy -= (fw * 0.45 - fh) / 2; fh = fw * 0.45; }
+  if (fh > fw * 0.9) { fx -= (fh / 0.9 - fw) / 2; fw = fh / 0.9; }
+  const FIT = [fx, fy, fw, fh].map(v => +v.toFixed(2));
+  svg.setAttribute("viewBox", FIT.join(" "));
+  let step = 0, slow = false, compareFrom = null;
+  const timing = () => slow ? { move: 2.4, wait: 7000 } : { move: 1.2, wait: 4200 };
+  function show(k, keepCompare) {
+    if (!keepCompare && compareFrom !== null) { compareFrom = null; $("compare").textContent = S.compare; $("compare").classList.remove("on"); }
     step = k;
     const fr = frames[k];
     document.querySelectorAll("#formation [data-u]").forEach(g => {
@@ -638,13 +757,15 @@ function drawFormation(b, f) {
       g.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
       g.classList.toggle("gone", fr.gone.has(g.dataset.u));
     });
+    let leaders = "";
     document.querySelectorAll("#formation [data-l]").forEach(t => {
-      const u = units[t.dataset.l], [x, y, r = 0] = fr.pos[u.id];
-      // Labels sit under the unit; a rotated unit is as tall as it was wide.
-      const half = Math.abs(r) > 45 ? u.w / 2 : u.h / 2;
-      t.style.transform = `translate(${x}px, ${y + half + 3}px)`;
-      t.classList.toggle("gone", fr.gone.has(u.id));
+      const p = labelAt[k][t.dataset.l];
+      t.classList.toggle("gone", fr.gone.has(t.dataset.l));
+      if (!p) return;
+      t.style.transform = `translate(${p.tx}px, ${p.ty}px)`;
+      if (p.line) leaders += `<line class="leader" x1="${p.line[0]}" y1="${p.line[1]}" x2="${p.line[2]}" y2="${p.line[3]}"/>`;
     });
+    document.querySelector("#formation #leaders").innerHTML = leaders;
     // Arrows and ghost outlines: where each unit that moved was standing in the previous step.
     let arrows = "", ghosts = "";
     if (k > 0) f.units.forEach(u => {
@@ -655,6 +776,14 @@ function drawFormation(b, f) {
       arrows += `<line class="arrow ${u.s}" x1="${x0}" y1="${y0}" x2="${ex}" y2="${ey}" marker-end="url(#ah-${u.s})"/>`;
       ghosts += `<rect class="ghost ${u.s}" x="${-u.w / 2}" y="${-u.h / 2}" width="${u.w}" height="${u.h}" transform="translate(${x0} ${y0}) rotate(${r0})"/>`;
     });
+    // Highlight the units that act in this step: the step's own "focus" list, or the few that moved most.
+    const moved = k === 0 ? [] : f.units.map(u => {
+      const [x0, y0] = frames[k - 1].pos[u.id], [x1, y1] = fr.pos[u.id];
+      return [u.id, frames[k - 1].gone.has(u.id) ? 0 : Math.hypot(x1 - x0, y1 - y0)];
+    }).filter(([, d]) => d >= 4).sort((a, c) => c[1] - a[1]).slice(0, 4).map(([id]) => id);
+    const actors = new Set(f.steps[k].focus || moved);
+    svg.classList.toggle("has-act", actors.size > 0);
+    document.querySelectorAll("#formation g[data-u]").forEach(g => g.classList.toggle("act", actors.has(g.dataset.u)));
     document.querySelector("#formation #arrows").innerHTML = arrows;
     document.querySelector("#formation #ghosts").innerHTML = ghosts;
     $("cap").innerHTML = `<b style="color:var(--gold)">${S.stepOf(k + 1, frames.length)}</b> ${fr.t}`;
@@ -672,8 +801,55 @@ function drawFormation(b, f) {
     playTimer = setInterval(() => {
       if (step >= frames.length - 1) { stopPlay(); $("play").textContent = S.play; return; }
       show(step + 1);
-    }, 3200);
+    }, timing().wait);
   };
+  $("slow").onclick = () => {
+    slow = !slow; $("slow").classList.toggle("on", slow);
+    svg.style.setProperty("--mv", timing().move + "s");
+    if (playTimer) { stopPlay(); $("play").textContent = S.play; }
+  };
+  // Before and after: jump to the opening position and back, to see how far the armies moved.
+  $("compare").onclick = () => {
+    stopPlay(); $("play").textContent = S.play;
+    if (compareFrom === null) {
+      if (step === 0) return;
+      compareFrom = step; show(0, true);
+      $("compare").textContent = S.back(compareFrom + 1); $("compare").classList.add("on");
+    } else show(compareFrom);
+  };
+
+  // Zoom and pan by changing the viewBox: mouse wheel, drag, and two-finger pinch.
+  const BASE = FIT;
+  let vb = [...BASE];
+  const setVb = v => { vb = v; svg.setAttribute("viewBox", v.join(" ")); };
+  const toSvg = (cx, cy) => { const r = svg.getBoundingClientRect(), sc = Math.max(vb[2] / r.width, vb[3] / r.height);
+    return [vb[0] + (cx - r.left - (r.width - vb[2] / sc) / 2) * sc, vb[1] + (cy - r.top - (r.height - vb[3] / sc) / 2) * sc]; };
+  const zoomAt = (cx, cy, f) => {
+    const w = Math.min(BASE[2] * 1.5, Math.max(BASE[2] / 5, vb[2] * f)), k = w / vb[2], [px, py] = toSvg(cx, cy);
+    setVb([px - (px - vb[0]) * k, py - (py - vb[1]) * k, w, vb[3] * k]);
+  };
+  const theater = () => $("formation").classList.contains("theater");
+  svg.addEventListener("wheel", e => { if (!theater()) return; e.preventDefault(); zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? 1.15 : 1 / 1.15); }, { passive: false });
+  const pts = new Map(); let pinch = 0;
+  svg.addEventListener("pointerdown", e => { if (!theater()) return; svg.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); });
+  svg.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    const [lx, ly] = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 2) {
+      const [[ax, ay], [bx, by]] = [...pts.values()], d = Math.hypot(ax - bx, ay - by);
+      if (pinch) zoomAt((ax + bx) / 2, (ay + by) / 2, pinch / d);
+      pinch = d; return;
+    }
+    const r = svg.getBoundingClientRect(), sc = Math.max(vb[2] / r.width, vb[3] / r.height);
+    setVb([vb[0] - (e.clientX - lx) * sc, vb[1] - (e.clientY - ly) * sc, vb[2], vb[3]]);
+  });
+  const lift = e => { pts.delete(e.pointerId); pinch = 0; };
+  svg.addEventListener("pointerup", lift); svg.addEventListener("pointercancel", lift);
+  $("fit").onclick = () => setVb([...BASE]);
+  const close = () => { $("formation").classList.remove("theater"); setVb([...BASE]); document.removeEventListener("keydown", esc); };
+  const esc = e => { if (e.key === "Escape") close(); };
+  $("expand").onclick = () => { Analytics.track("theatre_opened", { battle_id: state.current }); $("formation").classList.add("theater"); document.addEventListener("keydown", esc); };
+  $("thClose").onclick = close;
   show(0);
 }
 
