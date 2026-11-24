@@ -236,7 +236,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 51;
+const V = 52;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
@@ -260,7 +260,8 @@ const STR = {
         <li><b>Memória.</b> É lembrada, ensinada, virou símbolo ou expressão.</li>
         <li><b>Lição tática.</b> É estudada pelo jeito como foi travada.</li>
       </ol>
-      <p>Cobrir uma região vazia do mapa só serve para desempatar. Muitas batalhas entraram por sugestão de leitores, sempre passando por esse filtro.</p>`,
+      <p>Cobrir uma região vazia do mapa só serve para desempatar. Muitas batalhas entraram por sugestão de leitores.</p>
+      <p><b>Um aviso honesto:</b> nem toda batalha daqui é grande no sentido mundial. Algumas entraram porque leitores pediram, muitas vezes batalhas que pesam na memória do seu país ou da sua região. Achamos que isso também conta. Para as maiores de todas, use o botão ★ Essenciais.</p>`,
     ess: "★ Essenciais", essTitle: "Mostrar só as 30 batalhas essenciais",
     startHtml: `<h2>Comece por aqui</h2><p>Trinta batalhas que cumprem os quatro critérios ao mesmo tempo. O botão ★ Essenciais deixa só elas no mapa.</p>`,
     random: "Sortear uma batalha", menu: "☰ Batalhas", other: "English",
@@ -294,7 +295,8 @@ const STR = {
         <li><b>Memory.</b> It is remembered and taught, or became a symbol or a saying.</li>
         <li><b>Tactics.</b> It is studied for the way it was fought.</li>
       </ol>
-      <p>Filling an empty part of the map only breaks ties. Many battles came from readers' suggestions, always through this filter.</p>`,
+      <p>Filling an empty part of the map only breaks ties. Many battles came from readers' suggestions.</p>
+      <p><b>A fair warning:</b> not every battle here is great on a world scale. Some are on the map because readers asked for them, often battles that matter to the memory of their own country or region. We think that counts too. For the greatest of all, use the ★ Essentials button.</p>`,
     ess: "★ Essentials", essTitle: "Show only the 30 essential battles",
     startHtml: `<h2>Start here</h2><p>Thirty battles that meet all four tests at once. The ★ Essentials button leaves only these on the map.</p>`,
     random: "Pick a random battle", menu: "☰ Battles", other: "Português",
