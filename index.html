@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#e6dabd; --panel:#f4ecd8; --card:#e9dec3; --ink:#2b2824; --muted:#6b6250; --gold:#8c2a1c; --red:#b03a2e; --blue:#3b5168; --line:#cdbf9f; --side:310px; }
+  :root { --bg:#e6dabd; --panel:#f4ecd8; --card:#e9dec3; --ink:#2b2824; --muted:#6b6250; --gold:#8c2a1c; --red:#b03a2e; --blue:#3b5168; --line:#cdbf9f; --side:310px; --pw:440px; }
   * { box-sizing:border-box; }
   html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:Inter, sans-serif; overflow:hidden; }
   button { font:inherit; color:inherit; cursor:pointer; }
@@ -51,7 +51,7 @@
   .leaflet-tooltip-top:before { border-top-color:var(--line); }
 
   /* Battle panel */
-  #panel { position:absolute; z-index:1003; top:0; right:0; bottom:0; width:440px; max-width:100%; background:var(--panel); border-left:1px solid var(--line); overflow-y:auto; padding:20px; transform:translateX(100%); transition:transform .3s; }
+  #panel { position:absolute; z-index:1003; top:0; right:0; bottom:0; width:var(--pw); max-width:100%; background:var(--panel); border-left:1px solid var(--line); overflow-y:auto; padding:20px; transform:translateX(100%); transition:transform .3s; }
   #panel.open { transform:none; }
   .topnav { float:right; display:flex; align-items:center; gap:2px; margin:-6px -8px 0 8px; }
   .topnav button { font-size:1.5rem; background:none; border:none; color:var(--muted); line-height:1; padding:4px 8px; border-radius:8px; cursor:pointer; }
@@ -155,7 +155,15 @@
   #timeline .dot:hover, #timeline .dot.sel { transform:scale(2.2); border-color:#2b2824; z-index:2; }
   #timeline .tick { position:absolute; bottom:3px; font-size:.62rem; color:var(--muted); transform:translateX(-50%); white-space:nowrap; }
   #timeline .tick:before { content:""; position:absolute; left:50%; bottom:13px; height:34px; border-left:1px dashed var(--line); }
-  @media (min-width:761px) { body.po #timeline { right:452px; } }
+  @media (min-width:761px) {
+    body.po #timeline { right:calc(var(--pw) + 12px); }
+    /* Drag the left edge of the open panel to resize it. */
+    body.po #grip { display:block; }
+  }
+  #grip { display:none; position:absolute; z-index:1004; top:0; bottom:0; right:calc(var(--pw) - 5px); width:10px; cursor:ew-resize; touch-action:none; }
+  #grip::after { content:""; position:absolute; left:4px; top:50%; width:2px; height:48px; margin-top:-24px; border-radius:2px; background:var(--line); }
+  #grip:hover::after, body.resizing #grip::after { background:var(--gold); }
+  body.resizing { cursor:ew-resize; user-select:none; }
   .badge { display:inline-block; font-size:.7rem; font-weight:600; padding:3px 8px; border-radius:20px; background:#3d7a3a; color:#fff; margin-bottom:10px; }
   .fact-row { font-size:.88rem; line-height:1.45; margin-bottom:8px; }
   .fact-row b { display:block; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--gold); }
@@ -201,6 +209,7 @@
     #timeline .tick:nth-of-type(2n) { display:none; }
     #panel { top:auto; height:68%; width:100%; border-left:none; border-top:1px solid var(--line); border-radius:16px 16px 0 0; transform:translateY(100%); }
     #panel.drag { transition:none; }
+    .topnav .wide { display:none; }
     /* Grab handle: the sheet can be swiped down to close it. */
     #panel::before { content:""; display:block; width:44px; height:5px; border-radius:3px; background:var(--line); margin:-10px auto 10px; }
   }
@@ -230,13 +239,14 @@
 </nav>
 
 <aside id="panel"></aside>
+<div id="grip" role="separator" aria-orientation="vertical"></div>
 
 <script src="analytics.js?v=2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 // Language: English by default; Portuguese with ?lang=pt or the toggle. The English data files live in en/.
-const V = 52;
+const V = 53;
 const LANGS = ["en", "pt"], DEFAULT_LANG = "en";
 let LANG = new URLSearchParams(location.search).get("lang");
 try { if (LANGS.includes(LANG)) localStorage.setItem("lang", LANG); else LANG = localStorage.getItem("lang"); } catch (e) {}
@@ -264,6 +274,7 @@ const STR = {
       <p><b>Um aviso honesto:</b> nem toda batalha daqui é grande no sentido mundial. Algumas entraram porque leitores pediram, muitas vezes batalhas que pesam na memória do seu país ou da sua região. Achamos que isso também conta. Para as maiores de todas, use o botão ★ Essenciais.</p>`,
     ess: "★ Essenciais", essTitle: "Mostrar só as 30 batalhas essenciais",
     startHtml: `<h2>Comece por aqui</h2><p>Trinta batalhas que cumprem os quatro critérios ao mesmo tempo. O botão ★ Essenciais deixa só elas no mapa.</p>`,
+    widen: "Alargar ou estreitar o painel (ou arraste a borda)",
     random: "Sortear uma batalha", menu: "☰ Batalhas", other: "English",
     eras: { todas: "Todas", antiga: "Antiguidade", medieval: "Idade Média", moderna: "Idade Moderna", contemporanea: "Século XX" },
     conts: { todos: "Mundo", europa: "Europa", asia: "Ásia e Oriente Médio", africa: "África", americas: "Américas", pacifico: "Oceania e Pacífico" },
@@ -299,6 +310,7 @@ const STR = {
       <p><b>A fair warning:</b> not every battle here is great on a world scale. Some are on the map because readers asked for them, often battles that matter to the memory of their own country or region. We think that counts too. For the greatest of all, use the ★ Essentials button.</p>`,
     ess: "★ Essentials", essTitle: "Show only the 30 essential battles",
     startHtml: `<h2>Start here</h2><p>Thirty battles that meet all four tests at once. The ★ Essentials button leaves only these on the map.</p>`,
+    widen: "Widen or narrow the panel (or drag its edge)",
     random: "Pick a random battle", menu: "☰ Battles", other: "Português",
     eras: { todas: "All", antiga: "Antiquity", medieval: "Middle Ages", moderna: "Early Modern", contemporanea: "20th Century" },
     conts: { todos: "World", europa: "Europe", asia: "Asia and Middle East", africa: "Africa", americas: "Americas", pacifico: "Oceania and Pacific" },
@@ -655,10 +667,35 @@ function renderBasic(b) {
 })();
 
 // Arrows and close button at the top of the battle panel; the same order as the bottom buttons.
+// Panel width: drag the left edge, or toggle between narrow and wide. Remembered per browser.
+const PW_MIN = 360, PW_NARROW = 440;
+const pwMax = () => Math.max(PW_MIN, innerWidth - (innerWidth > 760 ? 310 : 0) - 40);
+function setPw(w, save) {
+  const v = Math.round(Math.min(pwMax(), Math.max(PW_MIN, w)));
+  document.documentElement.style.setProperty("--pw", v + "px");
+  if (save) try { localStorage.setItem("pw", v); } catch (e) {}
+  return v;
+}
+function curPw() { return parseInt(getComputedStyle(document.documentElement).getPropertyValue("--pw")) || PW_NARROW; }
+function toggleWide() {
+  const wide = curPw() < Math.min(pwMax(), 900) - 20;
+  setPw(wide ? Math.min(pwMax(), 900) : PW_NARROW, true);
+  Analytics.track("panel_resized", { mode: wide ? "wide" : "narrow" });
+}
+try { const w = +localStorage.getItem("pw"); if (w) setPw(w, false); } catch (e) {}
+$("grip").addEventListener("pointerdown", e => {
+  e.preventDefault(); $("grip").setPointerCapture(e.pointerId); document.body.classList.add("resizing");
+  const move = ev => setPw(innerWidth - ev.clientX, false);
+  const up = ev => { $("grip").removeEventListener("pointermove", move); $("grip").removeEventListener("pointerup", up); document.body.classList.remove("resizing"); setPw(innerWidth - ev.clientX, true); };
+  $("grip").addEventListener("pointermove", move); $("grip").addEventListener("pointerup", up);
+});
+addEventListener("resize", () => setPw(curPw(), false));
+
 function topNav(prev, next) {
   return `<div class="topnav">
       <button ${prev ? "" : "disabled"} onclick="openBattle('${prev}')" aria-label="${S.prev}" title="${S.prev}">‹</button>
       <button ${next ? "" : "disabled"} onclick="openBattle('${next}')" aria-label="${S.next}" title="${S.next}">›</button>
+      <button class="wide" onclick="toggleWide()" aria-label="${S.widen}" title="${S.widen}">⇔</button>
       <button id="close" onclick="closePanel()" aria-label="${S.close}" title="${S.close}">×</button>
     </div>`;
 }
