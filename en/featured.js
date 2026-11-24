@@ -43,6 +43,8 @@ const FEATURED = {
 
 // Connections between battles (same war, same commander, or cause and consequence). Read in both directions.
 const LINKS = {
+  helsingborg: ["lund", "poltava"],
+  milnebay: ["guadalcanal", "marcoral"],
   beaumonthamel: ["somme", "vimy"],
   dieppe: ["normandia"],
   lexingtonconcord: ["bunkerhill"],

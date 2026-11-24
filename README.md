@@ -1,10 +1,10 @@
 # Great Battles
 
-**A free interactive map of 356 battles that shaped history, from Megiddo (1457 BC) to Bakhmut (2023), in English and Portuguese.**
+**A free interactive map of 358 battles that shaped history, from Megiddo (1457 BC) to Bakhmut (2023), in English and Portuguese.**
 
 **Live:** https://banzaki.github.io/great-battles/
 
-Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 231 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
+Pick a battle on the map or the timeline and you get the whole story: the world before it, the people who led it, the battle step by step, and what it changed. For 233 of them, an animated diagram shows the armies moving, and the Battle Theatre opens that diagram full screen with zoom and pan.
 
 ![The map](media/map.png)
 
@@ -18,8 +18,8 @@ History books tell you *what* happened at Cannae or Gaugamela; few show you *whe
 
 ## What's inside
 
-- **356 battles** across every continent and era, each with four chapters, a timeline, glossary terms you can tap, and notes where historians disagree.
-- **231 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
+- **358 battles** across every continent and era, each with four chapters, a timeline, glossary terms you can tap, and notes where historians disagree.
+- **233 animated deployment diagrams** (7 to 10 steps each): units glide between positions, arrows and ghost outlines show where they came from, and the units that act in each step are highlighted.
 - **The Battle Theatre:** the diagram full screen, with wheel and pinch zoom, drag, slow motion and a before/after comparison. It works on phones in portrait and landscape.
 - **Two languages:** English and Portuguese, switchable from the header.
 
@@ -56,7 +56,7 @@ The launch post reached 51 upvotes and 20 comments on r/ancientrome, 37 upvotes 
 - Arrows at the top of each battle step to the previous and next battle, and a double-click on the map closes it.
 - A reader showed that labels sliding between steps looked like units moving (Zama, Gaugamela), and that diagrams could not show troops changing sides. Labels now stay put, and units can switch sides mid-battle: the Saxons at Leipzig and the Karluks at Talas now have diagrams.
 - A reader pointed out that Burma was empty, and another asked what makes a battle "great". The answer is now on the site (two of four tests: consequence, scale, memory, tactics), and 78 battles that pass it followed, taking the map to 350: Naungyo, Ngasaunggyan and Maymyo in Burma, Didgori, Kircholm, Saragarhi, Vicksburg, Bunker Hill, the battles after 1961 from the Sinai to Bakhmut, and classic gaps such as Bagration, Culloden, Wagram and Chancellorsville.
-- History teachers asked for Canada and for battles their students study: Vimy Ridge, Dieppe, Beaumont-Hamel with the Newfoundland Regiment, Lexington and Concord, Ia Drang and the Second Battle of Fallujah, all with diagrams.
+- History teachers asked for Canada and for battles their students study: Vimy Ridge, Dieppe, Beaumont-Hamel with the Newfoundland Regiment, Lexington and Concord, Ia Drang and the Second Battle of Fallujah, all with diagrams. Readers in Sweden and Australia added Helsingborg (1710) and Milne Bay (1942).
 - A reader suggested emblems for each side. 35 period emblems (the Roman aquila, the sign of Tanit, the Vergina sun, Timur's three circles, the Cross of Burgundy and more) now mark the sides of 188 battles. Each one is matched to the period, so there are no modern flags on ancient battles.
 
 ## Credits

@@ -240,4 +240,6 @@ const SIDE_EMBLEMS = {"maratona":["athens","achaemenid"],
 "dieppe":["","prussia_iron"],
 "lexingtonconcord":["","britain_1707"],
 "iadrang":["usa",""],
-"fallujah2004":["usa",""]};
+"fallujah2004":["usa",""],
+"helsingborg":["sweden",""],
+"milnebay":["","japan_rising"]};
